@@ -5,14 +5,11 @@ import com.aerospike.client.async.NettyEventLoops;
 import com.aerospike.client.policy.ClientPolicy;
 import com.aerospike.client.policy.Replica;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.epoll.EpollEventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
 import io.vertx.codegen.annotations.Fluent;
 import lombok.Data;
 
 @Data
 public class AerospikeConnectOptions {
-  static final String OS = System.getProperty("os.name");
   static final String DEFAULT_HOST = "localhost";
   static final int DEFAULT_PORT = 3000;
   static final int DEFAULT_EVENT_LOOP_SIZE = 2 * Runtime.getRuntime().availableProcessors();
@@ -90,18 +87,17 @@ public class AerospikeConnectOptions {
   }
 
   @Fluent
-  public AerospikeConnectOptions updateClientPolicy() {
+  public AerospikeConnectOptions updateClientPolicy(io.vertx.core.Vertx vertx) {
     EventPolicy eventPolicy = new EventPolicy();
     eventPolicy.maxCommandsInProcess = this.getMaxCommandsInProcess();
     eventPolicy.maxCommandsInQueue = this.getMaxCommandsInQueue();
-    EventLoopGroup group = getEventLoopGroup(this.getEventLoopSize());
+    EventLoopGroup group = getEventLoopGroup(vertx);
     this.clientPolicy.eventLoops = new NettyEventLoops(eventPolicy, group);
     this.clientPolicy.maxConnsPerNode = this.getMaxConnsPerNode();
     return this;
   }
 
-  private EventLoopGroup getEventLoopGroup(int size) {
-    return OS.contains("linux") || OS.contains("unix") ?
-        new EpollEventLoopGroup(size) : new NioEventLoopGroup(size);
+  private EventLoopGroup getEventLoopGroup(io.vertx.core.Vertx vertx) {
+    return vertx.nettyEventLoopGroup();
   }
 }
