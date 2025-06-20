@@ -54,7 +54,7 @@ public interface AerospikeClient extends AutoCloseable {
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
   static AerospikeClient create(Vertx vertx, AerospikeConnectOptions connectOptions) {
     return SharedDataUtils.getOrCreate(vertx, SharedDataUtils.getInstanceName(connectOptions.getHost(), connectOptions.getPort()),
-        () -> new AerospikeClientImpl(vertx, connectOptions.updateClientPolicy()));
+        () -> new AerospikeClientImpl(vertx, connectOptions.updateClientPolicy(vertx)));
   }
 
   /**
@@ -76,7 +76,7 @@ public interface AerospikeClient extends AutoCloseable {
    */
   @GenIgnore(GenIgnore.PERMITTED_TYPE)
   static AerospikeClient createNonShared(Vertx vertx, AerospikeConnectOptions connectOptions) {
-    return new AerospikeClientImpl(vertx, connectOptions.updateClientPolicy());
+    return new AerospikeClientImpl(vertx, connectOptions.updateClientPolicy(vertx));
   }
 
   /**
