@@ -18,7 +18,7 @@ Add the following dependency to the *dependencies* section of your build descrip
   <dependency>
     <groupId>io.d11</groupId>
     <artifactId>vertx-aerospike-client</artifactId>
-    <version>LATEST</version>
+    <version>3.0.1</version>
   </dependency>
 ```
 
